@@ -1,3 +1,9 @@
+import { Box, Typography } from "@mui/material";
+
 export default function Home() {
-  return <div>Job Listing</div>;
+  return (
+    <Box>
+      <Typography align="center">Weekday</Typography>
+    </Box>
+  );
 }

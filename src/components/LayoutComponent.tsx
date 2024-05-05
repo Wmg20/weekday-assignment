@@ -22,7 +22,9 @@ const LayoutComponent = ({ children }: { children: React.ReactNode }) => {
     <AppRouterCacheProvider>
       <CssVarsProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
-          <Container maxWidth="xl">{children}</Container>
+          <Container component={"main"} maxWidth="xl">
+            {children}
+          </Container>
         </QueryClientProvider>
       </CssVarsProvider>
     </AppRouterCacheProvider>

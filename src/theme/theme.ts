@@ -1,10 +1,10 @@
 "use client";
 
-import { Roboto } from "next/font/google";
+import { Lexend } from "next/font/google";
 import { experimental_extendTheme as extendTheme } from "@mui/material/styles";
 
-const roboto = Roboto({
-  weight: ["300", "400", "500", "700"],
+const lexend = Lexend({
+  weight: ["300", "400", "500", "700", "800", "900"],
   subsets: ["latin"],
   display: "swap",
 });
@@ -12,7 +12,7 @@ const roboto = Roboto({
 const theme = extendTheme({
   cssVarPrefix: "md-demo",
   typography: {
-    fontFamily: roboto.style.fontFamily,
+    fontFamily: lexend.style.fontFamily,
   },
 });
 
