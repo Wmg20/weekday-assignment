@@ -10,7 +10,26 @@ const lexend = Lexend({
 });
 
 const theme = extendTheme({
-  cssVarPrefix: "md-demo",
+  colorSchemes: {
+    light: {
+      palette: {
+        mode: "light",
+        primary: {
+          main: "#55efc4",
+          light: "##33c9dc",
+          dark: "#1de9b6",
+          contrastText: "#fff",
+        },
+        secondary: {
+          main: "#4943da",
+          light: "#64b5f6",
+          dark: "#0e7fe1",
+          contrastText: "#fff",
+        },
+      },
+    },
+  },
+
   typography: {
     fontFamily: lexend.style.fontFamily,
   },
