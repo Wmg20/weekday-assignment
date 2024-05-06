@@ -1,11 +1,12 @@
 import React from "react";
 import JobListing from "@/components/job-search/JobListing";
+import { Box } from "@mui/material";
 
 const Home = () => {
   return (
-    <div>
+    <Box>
       <JobListing />
-    </div>
+    </Box>
   );
 };
 

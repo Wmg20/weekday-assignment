@@ -1,12 +1,14 @@
 "use client";
 
 import { Box, Grid } from "@mui/material";
-import { useCallback, useMemo, useRef } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 
 import JobCard from "@/components/job-search/JobCard";
 import JobListLoader from "@/components/job-search/JobListLoader";
 import Loader from "@/components/constants/Loader";
+import JobFilterForm, { Filters } from "./JobFilterForm";
+import { useJobFilter } from "@/hooks/useJobFilter";
 
 const MAX_POST_PAGE = 10;
 
@@ -55,7 +57,10 @@ const fetchJobs = async ({ pageParam = 0 }: { pageParam: number }) => {
 };
 
 export default function JobListing() {
+  const [filterData, setFilterData] = useState<any>();
+
   const observer = useRef<IntersectionObserver>();
+  const queryClient = useQueryClient();
 
   const { data, error, fetchNextPage, hasNextPage, isFetching, isLoading } =
     useInfiniteQuery({
@@ -103,6 +108,16 @@ export default function JobListing() {
     [fetchNextPage, hasNextPage, isFetching, isLoading]
   );
 
+  const handleFilterChange = (filters: Filters) => {
+    setFilterData(filters);
+    console.log(filters);
+
+    // Invalidate the query to trigger a refetch
+    queryClient.invalidateQueries({ queryKey: ["todos"] });
+  };
+
+  const { filteredJobs } = useJobFilter(allJobs, filterData);
+
   if (isLoading) return <Loader />;
 
   if (error) return <h1> Oh no there was an erro </h1>;
@@ -117,9 +132,10 @@ export default function JobListing() {
         },
       }}
     >
+      <JobFilterForm onFilterChange={handleFilterChange} />
       <Grid container spacing={4} position={"relative"}>
-        {allJobs &&
-          allJobs.map((item: any, index: number) => (
+        {filteredJobs &&
+          filteredJobs.map((item: any, index: number) => (
             <Grid item xs={12} sm={6} lg={4} xl={3} key={item.jdUid}>
               <JobCard
                 title={item.companyName}
@@ -137,7 +153,11 @@ export default function JobListing() {
                 salaryCurrencyCode={item.salaryCurrencyCode}
               />
 
-              <div ref={lastElementRef} />
+              <div
+                ref={
+                  index === filteredJobs.length - 1 ? lastElementRef : undefined
+                }
+              />
             </Grid>
           ))}
       </Grid>
