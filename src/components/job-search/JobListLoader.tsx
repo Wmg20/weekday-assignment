@@ -10,7 +10,10 @@ const JobListLoader = ({ isFetching }: any) => {
       bgcolor="rgba(255, 255, 255, 0.5)"
       my={3}
     >
-      <Chip label={isFetching ? "Fetching jobs..." : "No more jobs"} />
+      <Chip
+        sx={{ width: 120 }}
+        label={isFetching ? "Fetching jobs..." : "No more jobs"}
+      />
     </Box>
   );
 };

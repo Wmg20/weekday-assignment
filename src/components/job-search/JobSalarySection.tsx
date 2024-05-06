@@ -33,7 +33,7 @@ const JobSalary = ({
           <Stack
             direction={"row"}
             alignItems={"center"}
-            gap={1}
+            gap={0.5}
             flexWrap={"wrap"}
           >
             <Stack direction="row" alignItems="center">
