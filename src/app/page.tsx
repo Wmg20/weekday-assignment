@@ -1,9 +1,12 @@
-import { Box, Typography } from "@mui/material";
+import React from "react";
+import JobListing from "@/components/job-search/JobListing";
 
-export default function Home() {
+const Home = () => {
   return (
-    <Box>
-      <Typography align="center">Weekday</Typography>
-    </Box>
+    <div>
+      <JobListing />
+    </div>
   );
-}
+};
+
+export default Home;
