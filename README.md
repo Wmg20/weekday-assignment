@@ -1,5 +1,3 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
 ## Getting Started
 
 First, run the development server:
@@ -16,21 +14,64 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployed on Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Check out live project (https://weekday-assignment-wheat.vercel.app/).
 
-## Learn More
+**Weekday - Job Search Platform Assignment Readme**
 
-To learn more about Next.js, take a look at the following resources:
+## Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Job Cards
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- Each job listing is displayed as a card containing the following information:
+  - Job title
+  - Company name
+  - Location
+  - Job description (limited with an option to expand)
+  - Experience required
+  - Apply button/link
 
-## Deploy on Vercel
+### Filters
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Users can refine job listings based on the following criteria:
+  - Minimum experience
+  - Company name
+  - Location
+  - Remote/on-site
+  - Tech stack
+  - Role
+  - Minimum base pay
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Infinite Scroll
+
+- Implemented infinite scroll to load additional job listings automatically as the user scrolls down the page. No need for a "Load More" button.
+
+### Responsive Design (Optional)
+
+- The platform is designed to be responsive, ensuring optimal viewing and interaction across various devices and screen sizes, including mobile devices.
+
+## Implementation Details
+
+### Technologies Used
+
+- **Frontend:** React.js, Redux, CSS, Material UI
+- **Data Fetching:** Tanstack React Query for efficient data fetching and caching.
+
+### Folder Structure
+
+- `src/`
+  - `components/`: Contains reusable UI components.
+  - `pages/`: Contains main page components (e.g., Home, Search).
+  - `styles/`: Contains CSS or styling-related files.
+  - `utils/`: Contains utility functions.
+  - `hooks/`: Contains custom hooks functions.
+  - `theme/`: Contains mui theme.
+- `public/`: Contains static assets like images or favicons.
+
+## Getting Started
+
+1. Clone the repository: `git clone [repository-url]`
+2. Install dependencies: `npm install`
+3. Start the development server: `npm start`
+4. Open your browser and visit `http://localhost:3000`
