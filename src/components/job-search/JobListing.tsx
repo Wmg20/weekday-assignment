@@ -113,7 +113,7 @@ export default function JobListing() {
     console.log(filters);
 
     // Invalidate the query to trigger a refetch
-    queryClient.invalidateQueries({ queryKey: ["todos"] });
+    // queryClient.invalidateQueries({ queryKey: ["todos"] });
   };
 
   const { filteredJobs } = useJobFilter(allJobs, filterData);

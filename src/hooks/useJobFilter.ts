@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
-
 import { Filters } from "@/components/job-search/JobFilterForm";
 import { JobListDetailsTypes } from "@/components/job-search/JobListing";
+import { useEffect, useMemo, useState } from "react";
 
 export const useJobFilter = (
   data: JobListDetailsTypes[],
@@ -12,10 +11,22 @@ export const useJobFilter = (
   useEffect(() => {
     const filterJobs = () => {
       return data.filter((job) => {
+        // Early return for null values
         if (!job || typeof job !== "object") {
           return false;
         }
 
+        // Check for null values in the filtered fields
+        if (
+          (filterData?.companyName && !job.companyName) ||
+          (filterData?.location && !job.location) ||
+          (filterData?.salary && !job.minJdSalary) ||
+          (filterData?.minExperience && !job.minExp)
+        ) {
+          return false;
+        }
+
+        // Check companyName
         if (
           filterData?.companyName &&
           job.companyName.toLowerCase() !== filterData.companyName.toLowerCase()
@@ -23,38 +34,34 @@ export const useJobFilter = (
           return false;
         }
 
-        if (
-          filterData?.jobModes &&
-          filterData.jobModes.length > 0 &&
-          job.location &&
-          typeof job.location === "string"
-        ) {
-          const jobLocation = job.location.toLowerCase();
-          if (
-            !filterData.jobModes.some(
-              (mode) => mode.title.toLowerCase() === jobLocation
-            )
-          ) {
-            return false;
+        // Check location against jobModes
+        if (filterData?.jobModes?.title && typeof job.location === "string") {
+          const remoteModeSelected =
+            filterData.jobModes.title.toLowerCase() === "remote";
+
+          // Check if "Remote" mode is selected and the job is not remote
+          if (remoteModeSelected && job.location.toLowerCase() !== "remote") {
+            return false; // Exclude non-remote jobs if "Remote" mode is selected
+          }
+
+          // Check if "Remote" mode is not selected and the job is remote
+          if (!remoteModeSelected && job.location.toLowerCase() === "remote") {
+            return false; // Exclude remote jobs if "Remote" mode is not selected
           }
         }
 
+        // Check jobRole against jobRoles
         if (
-          filterData?.jobRoles &&
-          filterData.jobRoles.length > 0 &&
-          job.jobRole &&
-          typeof job.jobRole === "string"
+          filterData?.jobRoles?.length &&
+          typeof job.jobRole === "string" &&
+          !filterData.jobRoles.some(
+            (role) => role.title.toLowerCase() === job.jobRole.toLowerCase()
+          )
         ) {
-          const jobType = job.jobRole.toLowerCase();
-          if (
-            !filterData.jobRoles.some(
-              (role) => role.title.toLowerCase() === jobType
-            )
-          ) {
-            return false;
-          }
+          return false;
         }
 
+        // Check location
         if (
           filterData?.location &&
           job.location.toLowerCase() !== filterData.location.toLowerCase()
@@ -62,11 +69,22 @@ export const useJobFilter = (
           return false;
         }
 
-        if (filterData?.salary && filterData.salary.range && job.minJdSalary) {
-          const filterSalary = parseInt(filterData.salary.range);
-          if (job.minJdSalary <= filterSalary) {
-            return false; // Exclude jobs with salaries below the filter range
-          }
+        // Check salary
+        if (
+          filterData?.salary?.range &&
+          job.minJdSalary &&
+          job.minJdSalary <= parseInt(filterData.salary.range)
+        ) {
+          return false;
+        }
+
+        // Check minimum experience
+        if (
+          filterData?.minExperience?.years &&
+          job.minExp &&
+          job.minExp > parseInt(filterData.minExperience.years)
+        ) {
+          return false;
         }
 
         return true;
@@ -75,7 +93,6 @@ export const useJobFilter = (
 
     const filteredResult = filterJobs();
     setFilteredJobs(filteredResult);
-    console.log("use job filter");
   }, [data, filterData]);
 
   return { filteredJobs };

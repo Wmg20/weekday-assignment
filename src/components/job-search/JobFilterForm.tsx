@@ -10,8 +10,8 @@ interface JobRole {
   title: string;
 }
 
-interface NumberOfEmployees {
-  range: string;
+interface minExperienceYear {
+  years: string;
 }
 
 interface JobSalary {
@@ -26,9 +26,9 @@ export interface Filters {
   companyName?: string;
   location?: string;
   jobRoles?: JobRole[];
-  jobModes?: JobMode[];
-  employees?: string;
-  salary?: any;
+  jobModes?: JobMode;
+  minExperience?: minExperienceYear;
+  salary?: JobSalary;
 }
 
 const jobRoles: JobRole[] = [
@@ -40,11 +40,17 @@ const jobRoles: JobRole[] = [
   { title: "React Native" },
 ];
 
-const numberOfEmployees: NumberOfEmployees[] = [
-  { range: " 1 - 10" },
-  { range: " 10 - 20" },
-  { range: " 20 - 30" },
-  { range: " 30 - 40" },
+const minExperienceYear: minExperienceYear[] = [
+  { years: "1" },
+  { years: "2" },
+  { years: "3" },
+  { years: "4" },
+  { years: "5" },
+  { years: "6" },
+  { years: "7" },
+  { years: "8" },
+  { years: "9" },
+  { years: "10" },
 ];
 
 const jobSalary: JobSalary[] = [
@@ -56,11 +62,7 @@ const jobSalary: JobSalary[] = [
   { range: "50L" },
 ];
 
-const jobMode: JobMode[] = [
-  { title: "Remote" },
-  { title: "Hybrid" },
-  { title: "In-office" },
-];
+const jobMode: JobMode[] = [{ title: "Remote" }, { title: "On-Site" }];
 
 const JobFilterForm: React.FC<{
   onFilterChange: (filters: Filters) => void;
@@ -69,9 +71,9 @@ const JobFilterForm: React.FC<{
     companyName: "",
     location: "",
     jobRoles: [],
-    jobModes: [],
-    employees: "",
-    salary: "",
+    jobModes: { title: "" },
+    minExperience: { years: "" },
+    salary: { range: "" },
   });
 
   const handleAutocompleteChange = (
@@ -182,17 +184,17 @@ const JobFilterForm: React.FC<{
           >
             <Autocomplete
               size="small"
-              id="tags-outlined-employees"
-              options={numberOfEmployees}
-              getOptionLabel={(option) => option.range}
+              id="tags-outlined-minExperience"
+              options={minExperienceYear}
+              getOptionLabel={(option) => option.years}
               filterSelectedOptions
               onChange={(event, newValue) =>
-                handleAutocompleteChange(event, newValue, "employees")
+                handleAutocompleteChange(event, newValue, "minExperience")
               }
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  placeholder="Number Of Employees"
+                  placeholder="Minimum Experience"
                   sx={{
                     "& ::placeholder": {
                       fontSize: 14,
@@ -222,11 +224,11 @@ const JobFilterForm: React.FC<{
             hiddenLabel
           >
             <Autocomplete
-              multiple
+              // multiple
               size="small"
               id="tags-outlined-modes"
               options={jobMode}
-              defaultValue={[]}
+              // defaultValue={[]}
               getOptionLabel={(option) => option.title}
               filterSelectedOptions
               onChange={(event, newValue) =>
@@ -236,7 +238,7 @@ const JobFilterForm: React.FC<{
                 <TextField
                   {...params}
                   key={params.id}
-                  placeholder={filters?.jobModes?.length === 0 ? "Remote" : ""}
+                  placeholder="Remote"
                   sx={{
                     "& ::placeholder": {
                       fontSize: 14,
