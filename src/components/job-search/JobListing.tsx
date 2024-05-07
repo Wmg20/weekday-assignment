@@ -1,14 +1,14 @@
 "use client";
 
-import { Box, Grid } from "@mui/material";
-import { useCallback, useMemo, useRef, useState } from "react";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { Box } from "@mui/material";
 
-import JobCard from "@/components/job-search/JobCard";
-import JobListLoader from "@/components/job-search/JobListLoader";
+import useJobListing from "@/hooks/useJobListing";
 import Loader from "@/components/constants/Loader";
-import JobFilterForm, { Filters } from "./JobFilterForm";
 import { useJobFilter } from "@/hooks/useJobFilter";
+import JobListLoader from "@/components/job-search/JobListLoader";
+import JobFilterForm, { Filters } from "@/components/job-search/JobFilterForm";
+import JobCardList from "@/components/job-search/JobCardList";
 
 const MAX_POST_PAGE = 10;
 
@@ -21,11 +21,10 @@ export interface JobListDetailsTypes {
   location: string;
   logoUrl: string;
   maxExp: number;
-  maxJdSalary: number | null;
+  maxJdSalary: number;
   minExp: number;
-  minJdSalary: number | null;
+  minJdSalary: number;
   salaryCurrencyCode: string;
-  // numberOfEmployees?: string;
 }
 
 const fetchJobs = async ({ pageParam = 0 }: { pageParam: number }) => {
@@ -59,64 +58,15 @@ const fetchJobs = async ({ pageParam = 0 }: { pageParam: number }) => {
 export default function JobListing() {
   const [filterData, setFilterData] = useState<any>();
 
-  const observer = useRef<IntersectionObserver>();
-  const queryClient = useQueryClient();
+  const { error, isFetching, isLoading, allJobs, lastElementRef } =
+    useJobListing(fetchJobs, MAX_POST_PAGE);
 
-  const { data, error, fetchNextPage, hasNextPage, isFetching, isLoading } =
-    useInfiniteQuery({
-      queryKey: ["todos"],
-      queryFn: ({ pageParam }) => fetchJobs({ pageParam }),
-      getNextPageParam: (lastPage, allPages) => {
-        const nextPage = allPages.length;
-        return nextPage * MAX_POST_PAGE < lastPage.totalCount
-          ? nextPage
-          : undefined;
-      },
-      initialPageParam: 0,
-    });
-
-  const allJobs = useMemo(() => {
-    // Flatten the data
-    return (
-      data?.pages.reduce(
-        (acc: any, page: any) => acc.concat(page.jdList),
-        []
-      ) ?? []
-    );
-  }, [data]);
-
-  const lastElementRef = useCallback(
-    (node: HTMLDivElement) => {
-      if (isLoading) return;
-
-      // Create a new IntersectionObserver instance whenever filteredJobs changes
-      const newObserver = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetching) {
-          fetchNextPage();
-        }
-      });
-
-      // Disconnect the previous observer
-      if (observer.current) observer.current.disconnect();
-
-      // Assign the new observer to the current ref
-      observer.current = newObserver;
-
-      // Observe the new node
-      if (node) observer.current.observe(node);
-    },
-    [fetchNextPage, hasNextPage, isFetching, isLoading]
-  );
+  const { filteredJobs } = useJobFilter(allJobs, filterData);
 
   const handleFilterChange = (filters: Filters) => {
     setFilterData(filters);
     console.log(filters);
-
-    // Invalidate the query to trigger a refetch
-    // queryClient.invalidateQueries({ queryKey: ["todos"] });
   };
-
-  const { filteredJobs } = useJobFilter(allJobs, filterData);
 
   if (isLoading) return <Loader />;
 
@@ -133,35 +83,10 @@ export default function JobListing() {
       }}
     >
       <JobFilterForm onFilterChange={handleFilterChange} />
-      <Grid container spacing={4} position={"relative"}>
-        {filteredJobs &&
-          filteredJobs.map((item: any, index: number) => (
-            <Grid item xs={12} sm={6} lg={4} xl={3} key={item.jdUid}>
-              <JobCard
-                title={item.companyName}
-                description={item.jobDetailsFromCompany}
-                applyLink={item.jdLink}
-                company={item.companyName}
-                experience={item.maxExp}
-                location={item.location}
-                logoUrl={item.logoUrl}
-                jobRole={item.jobRole}
-                maxExp={item.maxExp}
-                minExp={item.minExp}
-                minJdSalary={item.minJdSalary}
-                maxJdSalary={item.maxJdSalary}
-                salaryCurrencyCode={item.salaryCurrencyCode}
-              />
-
-              <div
-                ref={
-                  index === filteredJobs.length - 1 ? lastElementRef : undefined
-                }
-              />
-            </Grid>
-          ))}
-      </Grid>
-
+      <JobCardList
+        filteredJobs={filteredJobs}
+        lastElementRef={lastElementRef}
+      />
       <JobListLoader isFetching={isFetching} />
     </Box>
   );

@@ -8,18 +8,18 @@ import CompanyInfo from "@/components/job-search/CompanyInfo";
 import JobDescription from "@/components/job-search/JobDescription";
 
 export interface JobCardProps {
-  title?: string;
+  title: string;
   company: string;
   location: string;
   description: string;
-  experience: string;
+  experience: number;
   applyLink: string;
   logoUrl: any;
   jobRole: string;
   maxExp: number;
   minExp: number;
-  minJdSalary?: number;
-  maxJdSalary?: number;
+  minJdSalary: number;
+  maxJdSalary: number;
   salaryCurrencyCode: string;
 }
 

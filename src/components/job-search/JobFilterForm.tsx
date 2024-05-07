@@ -64,12 +64,15 @@ const jobSalary: JobSalary[] = [
 
 const jobMode: JobMode[] = [{ title: "Remote" }, { title: "On-Site" }];
 
+let timer: NodeJS.Timeout | null = null;
+
 const JobFilterForm: React.FC<{
   onFilterChange: (filters: Filters) => void;
 }> = ({ onFilterChange }) => {
+  const [location, setLocation] = useState("");
+  const [company, setCompany] = useState("");
+
   const [filters, setFilters] = useState<Filters>({
-    companyName: "",
-    location: "",
     jobRoles: [],
     jobModes: { title: "" },
     minExperience: { years: "" },
@@ -87,30 +90,43 @@ const JobFilterForm: React.FC<{
     }));
   };
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      [name]: value,
-    }));
-  };
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    field: string
+  ) => {
+    const { value } = e.target;
 
-  const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
-    // Trigger job search when user hit enter button or submit form
-    e.preventDefault();
-    onFilterChange(filters);
-  };
+    if (timer) {
+      clearTimeout(timer);
+    }
 
-  const debouncedFilterChange = debounce(onFilterChange, 300);
+    timer = setTimeout(() => {
+      if (field === "location") {
+        setLocation(value);
+      } else if (field === "companyName") {
+        setCompany(value);
+      }
+    }, 1000);
+  };
 
   useEffect(() => {
-    debouncedFilterChange(filters);
+    const filterFields = {
+      companyName: company,
+      location: location,
+      jobRoles: filters.jobRoles,
+      jobModes: filters.jobModes,
+      minExperience: filters.minExperience,
+      salary: filters.salary,
+    };
+    debouncedFilterChange(filterFields);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters]);
+  }, [filters, company, location]);
+
+  const debouncedFilterChange = debounce(onFilterChange, 500);
 
   return (
     <Box mb={4}>
-      <form onSubmit={handleFormSubmit}>
+      <form>
         <Box
           display={"flex"}
           flexDirection={"row"}
@@ -312,8 +328,8 @@ const JobFilterForm: React.FC<{
               placeholder="Company Name"
               name="companyName"
               type="search"
-              value={filters.companyName}
-              onChange={handleInputChange}
+              // value={filters.companyName}
+              onChange={(e: any) => handleInputChange(e, "companyName")}
               sx={{
                 "& ::placeholder": {
                   fontSize: 14,
@@ -341,9 +357,9 @@ const JobFilterForm: React.FC<{
               fullWidth
               placeholder="Location"
               name="location"
-              value={filters.location}
+              // value={filters.location}
               type="search"
-              onChange={handleInputChange}
+              onChange={(e: any) => handleInputChange(e, "location")}
               sx={{
                 "& ::placeholder": {
                   fontSize: 14,
