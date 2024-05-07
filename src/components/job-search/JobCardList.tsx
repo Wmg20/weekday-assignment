@@ -14,7 +14,15 @@ const JobCardList = ({ filteredJobs, lastElementRef }: JobCardListProps) => {
     <>
       <Grid container spacing={4} position="relative">
         {filteredJobs.map((item, index) => (
-          <Grid item xs={12} sm={6} lg={4} xl={3} key={item.jdUid}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            lg={4}
+            xl={3}
+            key={item.jdUid}
+            ref={index === filteredJobs.length - 1 ? lastElementRef : undefined}
+          >
             <JobCard
               title={item.companyName}
               description={item.jobDetailsFromCompany}
@@ -30,9 +38,9 @@ const JobCardList = ({ filteredJobs, lastElementRef }: JobCardListProps) => {
               maxJdSalary={item.maxJdSalary}
               salaryCurrencyCode={item.salaryCurrencyCode}
             />
-            {index === filteredJobs.length - 1 && (
+            {/* {index === filteredJobs.length - 1 && (
               <div ref={lastElementRef}></div>
-            )}
+            )} */}
           </Grid>
         ))}
       </Grid>

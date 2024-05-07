@@ -1,7 +1,9 @@
-import { useRef, useCallback, useMemo } from "react";
+import { useRef, useCallback, useMemo, useEffect } from "react";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
+import { useJobFilter } from "./useJobFilter";
+import { debounce } from "@mui/material";
 
-const useJobListing = (fetchJobs: any, MAX_POST_PAGE: any) => {
+const useJobListing = (fetchJobs: any, MAX_POST_PAGE: any, filterData: any) => {
   const observer = useRef<IntersectionObserver>();
 
   const { data, error, fetchNextPage, hasNextPage, isFetching, isLoading } =
@@ -22,8 +24,24 @@ const useJobListing = (fetchJobs: any, MAX_POST_PAGE: any) => {
     return data?.pages.reduce((acc, page) => acc.concat(page.jdList), []) ?? [];
   }, [data]);
 
+  const { filteredJobs } = useJobFilter(allJobs, filterData);
+
+  console.log(filteredJobs.length);
+
+  // If no data found initially while filters are applied it will call to fetch next page
+  const shouldFetchNextPage = useCallback(() => {
+    if (filterData && filteredJobs.length === 0 && hasNextPage && !isFetching) {
+      fetchNextPage();
+      console.log("Fetching next page as no data found on current page");
+    }
+  }, [filteredJobs, hasNextPage, isFetching, fetchNextPage, filterData]);
+
+  useEffect(() => {
+    shouldFetchNextPage();
+  }, [shouldFetchNextPage]);
+
   const lastElementRef = useCallback(
-    (node: HTMLDivElement) => {
+    (node: any) => {
       if (isLoading) return;
 
       const newObserver = new IntersectionObserver((entries) => {

@@ -8,7 +8,7 @@ const JobListLoader = ({ isFetching }: any) => {
       alignItems="center"
       justifyContent="center"
       bgcolor="rgba(255, 255, 255, 0.5)"
-      my={3}
+      my={1.5}
     >
       <Chip
         sx={{ width: 120 }}

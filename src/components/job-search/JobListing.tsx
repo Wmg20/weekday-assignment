@@ -59,7 +59,7 @@ export default function JobListing() {
   const [filterData, setFilterData] = useState<any>();
 
   const { error, isFetching, isLoading, allJobs, lastElementRef } =
-    useJobListing(fetchJobs, MAX_POST_PAGE);
+    useJobListing(fetchJobs, MAX_POST_PAGE, filterData);
 
   const { filteredJobs } = useJobFilter(allJobs, filterData);
 

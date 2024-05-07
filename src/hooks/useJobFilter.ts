@@ -3,14 +3,14 @@ import { JobListDetailsTypes } from "@/components/job-search/JobListing";
 import { useEffect, useMemo, useState } from "react";
 
 export const useJobFilter = (
-  data: JobListDetailsTypes[],
+  allJobs: JobListDetailsTypes[],
   filterData: Filters
 ) => {
   const [filteredJobs, setFilteredJobs] = useState<JobListDetailsTypes[]>([]);
 
   useEffect(() => {
     const filterJobs = () => {
-      return data.filter((job) => {
+      return allJobs.filter((job) => {
         // Early return for null values
         if (!job || typeof job !== "object") {
           return false;
@@ -93,7 +93,7 @@ export const useJobFilter = (
 
     const filteredResult = filterJobs();
     setFilteredJobs(filteredResult);
-  }, [data, filterData]);
+  }, [allJobs, filterData]);
 
   return { filteredJobs };
 };
